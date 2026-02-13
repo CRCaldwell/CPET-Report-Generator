@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+
+<html lang="en" manifest="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CPET Report">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0B1120">
+<meta name="description" content="CPET Report Generator — Baptist Health Heart Institute">
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI4IiBmaWxsPSIjMEIxMTIwIi8+PHRleHQgeD0iNjQiIHk9Ijc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjUyIiBmaWxsPSIjMjU2M0VCIiBmb250LWZhbWlseT0ic3lzdGVtLXVpIiBmb250LXdlaWdodD0iODAwIj7ij6k8L3RleHQ+PC9zdmc+">
+<title>CPET Report Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0B1120; --surface: #111827; --surface-light: #1F2937; --surface-hover: #374151;
+  --border: #1E3A5F; --border-light: #2D4A6F;
+  --accent: #2563EB; --accent-light: #3B82F6; --accent-glow: rgba(37,99,235,0.15);
+  --success: #10B981; --success-light: #34D399;
+  --warning: #F59E0B; --warning-light: #FBBF24;
+  --danger: #EF4444; --danger-light: #F87171;
+  --purple: #8B5CF6; --purple-light: #A78BFA;
+  --text: #F9FAFB; --text-sec: #9CA3AF; --text-muted: #6B7280;
+  --z1: #3B82F6; --z2: #10B981; --z3: #F59E0B; --z4: #F97316; --z5: #EF4444;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { overscroll-behavior: none; }
+body { font-family: 'DM Sans', 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; min-height: 100dvh; padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); }
+.container { max-width: 1100px; margin: 0 auto; padding-bottom: 80px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 14px; }
+.card-glow { background: linear-gradient(135deg, var(--surface) 0%, #0f1f3d 100%); }
+.stitle { color: var(--accent-light); font-weight: 700; font-size: 14px; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 2px solid var(--border); text-transform: uppercase; letter-spacing: 1px; }
+.g2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; }
+.g3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.g4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+@media (max-width: 768px) { .g2,.g3,.g4 { grid-template-columns: 1fr !important; } .g2 { grid-template-columns: repeat(2,1fr) !important; } }
+@media (max-width: 480px) { .g2 { grid-template-columns: 1fr !important; } body { font-size: 14px; } .card { padding: 16px; } }
+input, select, textarea {
+  background: var(--surface-light); border: 1px solid var(--border); border-radius: 8px;
+  padding: 10px 14px; color: var(--text); font-size: 14px; font-family: 'DM Sans', sans-serif;
+  width: 100%; -webkit-appearance: none;
+}
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+textarea { resize: vertical; min-height: 60px; }
+.fl { color: var(--text-sec); font-size: 11px; font-weight: 600; margin-bottom: 4px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+.btn {
+  padding: 12px 24px; border-radius: 10px; border: none; color: #fff; cursor: pointer;
+  font-size: 15px; font-weight: 700; font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.btn:active { transform: scale(0.97); opacity: 0.9; }
+.btn-p { background: var(--accent); }
+.btn-s { background: var(--success); }
+.btn-g { background: var(--surface-light); border: 1px solid var(--border); }
+.btn-sm { padding: 8px 16px; font-size: 13px; }
+.sb { background: var(--surface-light); padding: 10px; border-radius: 8px; text-align: center; }
+.sb .v { font-weight: 700; font-size: 16px; font-family: 'DM Mono', monospace; margin-top: 2px; }
+.sb .l { color: var(--text-muted); font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; }
+.sb .s { color: var(--text-sec); font-size: 10px; margin-top: 2px; }
+.fw { display: flex; flex-wrap: wrap; gap: 12px; }
+.hidden { display: none !important; }
+
+/* Bottom nav bar — app-like */
+.bottom-nav {
+position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+background: rgba(17,24,39,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+border-top: 1px solid var(–border); display: flex;
+padding: 6px 0 calc(6px + var(–safe-bottom));
+}
+.bnav-item {
+flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
+padding: 8px 4px; color: var(–text-muted); font-size: 10px; font-weight: 600;
+cursor: pointer; transition: color 0.15s; border: none; background: none;
+font-family: ‘DM Sans’, sans-serif; -webkit-tap-highlight-color: transparent;
+}
+.bnav-item.active { color: var(–accent-light); }
+.bnav-item:disabled { opacity: 0.35; }
+.bnav-icon { font-size: 22px; line-height: 1; }
+
+/* Profile cards */
+.pc {
+background: var(–surface); border: 1px solid var(–border); border-radius: 12px; padding: 14px;
+cursor: pointer; transition: all 0.15s; touch-action: manipulation;
+}
+.pc:active { transform: scale(0.98); }
+.pc.sel { border-width: 2px; }
+
+/* Zone bar */
+.zbar { display: flex; gap: 3px; border-radius: 8px; overflow: hidden; margin: 8px 0; }
+.zbar .z { flex: 1; padding: 10px 6px; text-align: center; }
+.zbar .zn { color: #fff; font-weight: 800; font-size: 14px; font-family: ‘DM Mono’, monospace; }
+.zbar .zh { color: rgba(255,255,255,0.9); font-size: 9px; font-weight: 500; margin-top: 2px; }
+
+/* Zone row */
+.zrow { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(–border); }
+.zicon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; color: #fff; flex-shrink: 0; }
+
+/* Report sub-tabs */
+.rtabs { display: flex; gap: 4px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+.rtab {
+padding: 8px 16px; border-radius: 8px; border: none; background: var(–surface-light);
+color: var(–text-sec); cursor: pointer; font-size: 12px; font-weight: 600;
+font-family: ‘DM Sans’, sans-serif; white-space: nowrap; flex-shrink: 0;
+}
+.rtab.active { background: var(–accent); color: #fff; }
+
+/* Install banner */
+.install-banner {
+background: linear-gradient(135deg, var(–accent) 0%, #1d4ed8 100%);
+border-radius: 12px; padding: 16px; margin-bottom: 14px; display: flex;
+align-items: center; gap: 14px; flex-wrap: wrap;
+}
+.install-banner .ib-text { flex: 1; min-width: 200px; }
+.install-banner h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.install-banner p { font-size: 12px; opacity: 0.85; }
+
+@media print {
+body { background: #fff !important; color: #000 !important; padding: 0; }
+.bottom-nav, .no-print, .install-banner { display: none !important; }
+.card { border-color: #ddd !important; break-inside: avoid; }
+
+- { color-adjust: exact !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  }
+
+</style>
+</head>
+<body>
+
+<div class="container" id="app">
+
+  <!-- Install Banner (shown on first visit) -->
+
+  <div class="install-banner no-print" id="install-banner" style="display:none">
+    <div style="font-size:32px">⚡</div>
+    <div class="ib-text">
+      <h3>Add to Home Screen</h3>
+      <p>Install this app for quick access — works offline!</p>
+    </div>
+    <button class="btn btn-g btn-sm" onclick="installApp()" id="install-btn">Install</button>
+    <button class="btn btn-g btn-sm" onclick="dismissInstall()" style="padding:8px 12px">✕</button>
+  </div>
+
+  <!-- ═══ IMPORT PANEL ═══ -->
+
+  <div id="p-import" style="padding:16px">
+    <div style="text-align:center;padding:20px 16px 24px">
+      <div style="font-size:36px;margin-bottom:8px">⚡</div>
+      <div style="font-size:22px;font-weight:800;letter-spacing:-0.5px">CPET Report Generator</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:4px">Vyntus CPX / Sentry Suite V3.20.7<br>Baptist Health Heart Institute</div>
+    </div>
+
+```
+<div class="card">
+  <div class="stitle">Select a Demo Patient</div>
+  <p style="color:var(--text-sec);font-size:13px;line-height:1.6;margin-bottom:14px">
+    Tap any profile to instantly load simulated CPET data and generate reports.
+  </p>
+  <div id="prof-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px"></div>
+</div>
+
+<div class="card">
+  <div class="stitle">Or Import Real Data</div>
+  <p style="color:var(--text-sec);font-size:13px;line-height:1.6;margin-bottom:14px">Import CSV from your Vyntus CPX / Sentry Suite.</p>
+  <div class="fw">
+    <button class="btn btn-p" onclick="document.getElementById('f-cpet').click()">📂 Import CPET CSV</button>
+    <button class="btn btn-g" onclick="document.getElementById('f-lac').click()">🩸 Lactate CSV</button>
+  </div>
+  <input type="file" id="f-cpet" accept=".csv,.txt,.tsv" style="display:none" onchange="handleCPET(event)">
+  <input type="file" id="f-lac" accept=".csv,.txt,.tsv" style="display:none" onchange="handleLac(event)">
+  <div id="ustat" style="margin-top:12px"></div>
+</div>
+
+<div class="card" style="background:rgba(37,99,235,0.05);border-color:rgba(37,99,235,0.2)">
+  <div class="stitle">📥 Download Demo CSVs</div>
+  <p style="color:var(--text-sec);font-size:13px;margin-bottom:12px">Save all 10 profiles as CSV files for testing.</p>
+  <button class="btn btn-s" onclick="dlAllCSVs()">📥 Download All CSVs</button>
+</div>
+```
+
+  </div>
+
+  <!-- ═══ PATIENT PANEL ═══ -->
+
+  <div id="p-patient" class="hidden" style="padding:16px">
+    <div class="card">
+      <div class="stitle">Patient Demographics</div>
+      <div class="g3">
+        <div><label class="fl">Name</label><input id="f-name" type="text"></div>
+        <div><label class="fl">DOB</label><input id="f-dob" type="date"></div>
+        <div><label class="fl">Age</label><input id="f-age" type="number" value="40" inputmode="numeric"></div>
+      </div>
+      <div class="g4" style="margin-top:12px">
+        <div><label class="fl">Sex</label><select id="f-sex"><option value="male">Male</option><option value="female">Female</option></select></div>
+        <div><label class="fl">Height (cm)</label><input id="f-ht" type="number" value="175" inputmode="decimal"></div>
+        <div><label class="fl">Weight (kg)</label><input id="f-wt" type="number" value="80" inputmode="decimal"></div>
+        <div><label class="fl">Resting BP</label><input id="f-bp" type="text" placeholder="120/80"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="stitle">Test Configuration</div>
+      <div class="g3">
+        <div><label class="fl">Protocol</label><select id="f-proto"><option>Ramp</option><option>Ramp 10W/min</option><option>Ramp 15W/min</option><option>Ramp 20W/min</option><option>Ramp 25W/min</option><option>Ramp 30W/min</option><option>Bruce</option><option>Modified Bruce</option></select></div>
+        <div><label class="fl">Modality</label><select id="f-mod"><option>Cycle Ergometer</option><option>Treadmill</option></select></div>
+        <div><label class="fl">Resting ECG</label><input id="f-ecg" type="text" value="Normal sinus rhythm"></div>
+      </div>
+      <div style="margin-top:12px"><label class="fl">Indication</label><input id="f-ind" type="text" placeholder="Exercise capacity evaluation..."></div>
+      <div style="margin-top:12px"><label class="fl">Medications</label><input id="f-meds" type="text" placeholder="See medication list"></div>
+    </div>
+    <div style="padding:0 0 16px" class="no-print">
+      <button class="btn btn-p" onclick="generate()" style="width:100%;justify-content:center;font-size:16px;padding:14px">⚡ Generate Reports</button>
+    </div>
+  </div>
+
+  <!-- ═══ REPORT PANEL ═══ -->
+
+  <div id="p-report" class="hidden" style="padding:16px">
+    <div class="no-print" style="margin-bottom:14px">
+      <div class="rtabs">
+        <button class="rtab active" onclick="switchR('pat')" id="rt-pat">👤 Patient</button>
+        <button class="rtab" onclick="switchR('clin')" id="rt-clin">🏥 Clinical</button>
+        <button class="rtab" onclick="switchR('epic')" id="rt-epic">📋 EPIC EMR</button>
+        <button class="rtab" onclick="window.print()" style="margin-left:auto">🖨️ Print</button>
+      </div>
+    </div>
+    <div id="r-pat"></div>
+    <div id="r-clin" class="hidden"></div>
+    <div id="r-epic" class="hidden"></div>
+  </div>
+</div>
+
+<!-- Bottom Navigation Bar -->
+
+<nav class="bottom-nav no-print">
+  <button class="bnav-item active" onclick="nav('import')" id="n-import"><span class="bnav-icon">📋</span>Import</button>
+  <button class="bnav-item" onclick="nav('patient')" id="n-patient" disabled><span class="bnav-icon">👤</span>Patient</button>
+  <button class="bnav-item" onclick="nav('report')" id="n-report" disabled><span class="bnav-icon">📊</span>Reports</button>
+</nav>
+
+<script>
+// ═══════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════
+let D=null,L=null,R=null,curTab='import',curR='pat';
+
+// ═══════════════════════════════════════════════════
+// PROFILES
+// ═══════════════════════════════════════════════════
+const P=[
+{id:"elite_m",nm:"Elite Male Athlete",cat:"Athletic",cl:"#3B82F6",pt:{name:"Marcus Thompson",age:28,sex:"male",ht:183,wt:76,proto:"Ramp 30W/min",mod:"Cycle Ergometer",ind:"Athletic performance optimization",bp:"110/65"},ph:{vr:320,vp:4800,hr0:52,hrp:192,rr:0.75,rp:1.22,ver:10,vep:168,bfr:12,bfp:55,wp:420,a1:.58,a2:.78,pcr:40,pci:6,pcd:10,por:100,poi:18,sr:99,sm:95,dur:840,n:.03},lac:[{p:0,v:.9},{p:.15,v:1},{p:.3,v:1.1},{p:.45,v:1.4},{p:.58,v:1.9},{p:.7,v:2.8},{p:.8,v:4.2},{p:.9,v:7.1},{p:1,v:12.8}],desc:"Competitive cyclist. VO₂max ~63 mL/kg/min. Low resting HR, late AT, high lactate tolerance."},
+{id:"elite_f",nm:"Elite Female Athlete",cat:"Athletic",cl:"#EC4899",pt:{name:"Sarah Chen",age:25,sex:"female",ht:168,wt:58,proto:"Ramp 25W/min",mod:"Cycle Ergometer",ind:"Pre-season assessment",bp:"108/68"},ph:{vr:260,vp:3200,hr0:56,hrp:195,rr:.76,rp:1.20,ver:9,vep:130,bfr:13,bfp:52,wp:320,a1:.55,a2:.76,pcr:39,pci:5,pcd:9,por:100,poi:16,sr:99,sm:96,dur:780,n:.03},lac:[{p:0,v:.8},{p:.15,v:.9},{p:.3,v:1},{p:.45,v:1.3},{p:.58,v:2},{p:.7,v:3},{p:.8,v:4.5},{p:.9,v:7.5},{p:1,v:11.2}],desc:"Triathlete. VO₂max ~55 mL/kg/min. Excellent ventilatory efficiency."},
+{id:"rec_m",nm:"Recreational Male",cat:"Recreational",cl:"#10B981",pt:{name:"David Williams",age:42,sex:"male",ht:178,wt:84,proto:"Ramp 25W/min",mod:"Cycle Ergometer",ind:"Fitness evaluation",bp:"128/78"},ph:{vr:340,vp:2940,hr0:72,hrp:178,rr:.80,rp:1.15,ver:12,vep:105,bfr:15,bfp:45,wp:240,a1:.48,a2:.72,pcr:38,pci:4,pcd:7,por:100,poi:14,sr:98,sm:96,dur:660,n:.05},lac:[{p:0,v:1.2},{p:.2,v:1.5},{p:.35,v:1.9},{p:.48,v:2.5},{p:.6,v:3.2},{p:.72,v:4.5},{p:.85,v:6.8},{p:1,v:9.5}],desc:"Runs 3x/week. VO₂max ~35 mL/kg/min. Average fitness."},
+{id:"sed_m",nm:"Sedentary Male",cat:"Clinical",cl:"#F59E0B",pt:{name:"Robert Johnson",age:55,sex:"male",ht:175,wt:98,proto:"Ramp 20W/min",mod:"Cycle Ergometer",ind:"Pre-op cardiac risk",bp:"142/88"},ph:{vr:380,vp:1764,hr0:82,hrp:155,rr:.84,rp:1.08,ver:14,vep:72,bfr:18,bfp:38,wp:140,a1:.40,a2:.65,pcr:36,pci:3,pcd:5,por:100,poi:10,sr:97,sm:95,dur:480,n:.07},lac:[{p:0,v:1.5},{p:.2,v:2},{p:.4,v:3},{p:.55,v:4.2},{p:.7,v:5.8},{p:.85,v:7.5},{p:1,v:8.2}],desc:"Sedentary, BMI 32. VO₂max ~18 mL/kg/min. Submaximal effort."},
+{id:"hf",nm:"Heart Failure (HFrEF)",cat:"Clinical",cl:"#EF4444",pt:{name:"James Mitchell",age:62,sex:"male",ht:172,wt:88,proto:"Ramp 10W/min",mod:"Cycle Ergometer",ind:"HF transplant eval",bp:"105/70"},ph:{vr:350,vp:1144,hr0:88,hrp:128,rr:.86,rp:1.12,ver:16,vep:62,bfr:20,bfp:40,wp:80,a1:.35,a2:.60,pcr:32,pci:2,pcd:6,por:105,poi:12,sr:96,sm:93,dur:420,n:.08,vhi:1},lac:[{p:0,v:1.8},{p:.15,v:2.5},{p:.3,v:3.5},{p:.45,v:4.8},{p:.6,v:6.2},{p:.8,v:7.5},{p:1,v:8}],desc:"HFrEF EF 30%, NYHA III. VO₂max ~13. Elevated VE/VCO₂, chronotropic incompetence. Weber C."},
+{id:"copd",nm:"COPD (Mod-Severe)",cat:"Clinical",cl:"#8B5CF6",pt:{name:"William Davis",age:67,sex:"male",ht:170,wt:72,proto:"Ramp 10W/min",mod:"Cycle Ergometer",ind:"Dyspnea evaluation",bp:"135/82"},ph:{vr:300,vp:1080,hr0:78,hrp:135,rr:.82,rp:1.05,ver:15,vep:52,bfr:20,bfp:42,wp:70,a1:.42,a2:.68,pcr:42,pci:1,pcd:3,por:92,poi:8,sr:94,sm:88,dur:390,n:.09,vlim:1},lac:[{p:0,v:1.3},{p:.25,v:1.8},{p:.45,v:2.8},{p:.65,v:3.8},{p:.8,v:4.5},{p:1,v:5.2}],desc:"COPD GOLD III. Ventilatory limited, O₂ desat to 88%, doesn't reach predicted HR."},
+{id:"ob_f",nm:"Obese Female — MetSyn",cat:"Clinical",cl:"#F97316",pt:{name:"Patricia Brown",age:48,sex:"female",ht:163,wt:105,proto:"Ramp 15W/min",mod:"Cycle Ergometer",ind:"Exercise Rx metabolic syndrome",bp:"148/92"},ph:{vr:380,vp:1575,hr0:88,hrp:165,rr:.85,rp:1.10,ver:15,vep:68,bfr:18,bfp:36,wp:110,a1:.38,a2:.62,pcr:37,pci:3,pcd:5,por:100,poi:11,sr:97,sm:95,dur:480,n:.06},lac:[{p:0,v:1.6},{p:.2,v:2.2},{p:.38,v:3.2},{p:.55,v:4.5},{p:.7,v:5.8},{p:.85,v:6.8},{p:1,v:7.5}],desc:"BMI 39.5, metabolic syndrome. VO₂max ~15. Early AT, poor metabolic efficiency."},
+{id:"mast",nm:"Masters Athlete (68y)",cat:"Athletic",cl:"#14B8A6",pt:{name:"Richard Anderson",age:68,sex:"male",ht:176,wt:74,proto:"Ramp 20W/min",mod:"Cycle Ergometer",ind:"Annual fitness / zones",bp:"122/72"},ph:{vr:310,vp:2590,hr0:58,hrp:158,rr:.78,rp:1.18,ver:11,vep:98,bfr:14,bfp:42,wp:220,a1:.52,a2:.74,pcr:38,pci:4,pcd:7,por:100,poi:14,sr:98,sm:95,dur:720,n:.04},lac:[{p:0,v:1},{p:.2,v:1.2},{p:.38,v:1.5},{p:.52,v:2},{p:.65,v:3},{p:.78,v:4.8},{p:.9,v:7.5},{p:1,v:10}],desc:"Lifelong cyclist. VO₂max ~35 — superior for age (95th+ percentile)."},
+{id:"ys_f",nm:"Young Sedentary Female",cat:"Clinical",cl:"#FB923C",pt:{name:"Jessica Taylor",age:30,sex:"female",ht:165,wt:70,proto:"Ramp 20W/min",mod:"Cycle Ergometer",ind:"Exercise intolerance eval",bp:"118/74"},ph:{vr:280,vp:1540,hr0:80,hrp:188,rr:.82,rp:1.14,ver:12,vep:72,bfr:16,bfp:40,wp:130,a1:.42,a2:.66,pcr:38,pci:3,pcd:6,por:100,poi:12,sr:99,sm:97,dur:510,n:.06},lac:null,desc:"Office worker. VO₂max ~22. Pure deconditioning. No lactate data."},
+{id:"ph",nm:"Pulmonary Hypertension",cat:"Clinical",cl:"#DC2626",pt:{name:"Mary Wilson",age:52,sex:"female",ht:160,wt:65,proto:"Ramp 10W/min",mod:"Cycle Ergometer",ind:"PAH functional assessment",bp:"108/68"},ph:{vr:290,vp:910,hr0:90,hrp:140,rr:.84,rp:1.06,ver:16,vep:55,bfr:20,bfp:38,wp:55,a1:.32,a2:.55,pcr:28,pci:0,pcd:6,por:108,poi:10,sr:94,sm:86,dur:360,n:.08,vhi:1,o2f:1},lac:[{p:0,v:1.4},{p:.2,v:2.5},{p:.35,v:3.8},{p:.5,v:5.2},{p:.7,v:6.5},{p:1,v:7.2}],desc:"PAH WHO Grp 1. PETCO₂ very low, VE/VCO₂ >45, O₂ desat to 86%. Markedly abnormal."}
+];
+
+// ═══════════════════════════════════════════════════
+// DATA ENGINE
+// ═══════════════════════════════════════════════════
+function genBxB(pr){const p=pr.ph,wt=pr.pt.wt,d=[],st=Math.round(p.dur/5);let s=pr.id.split("").reduce((a,c)=>a+c.charCodeAt(0),0);const rn=()=>{s=(s*16807)%2147483647;return(s-1)/2147483646};const g=()=>{const u=rn(),v=rn();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)};for(let i=0;i<=st;i++){const t=(i/st)*p.dur,pct=Math.min(i/st,1),rp=Math.min(pct*1.05,1);const vo2=Math.max(200,(p.vr+(p.vp-p.vr)*Math.pow(rp,1.08))*(1+g()*p.n));const rer=Math.max(.65,Math.min(1.35,p.rr+(p.rp-p.rr)*Math.pow(rp,1.25)+g()*p.n*.3));const vco2=vo2*rer;const hp=p.o2f?.7:.92;const hr=Math.max(p.hr0-5,Math.round(p.hr0+(p.hrp-p.hr0)*Math.pow(rp,hp)+g()*2));let ve;if(rp<p.a2)ve=p.ver+(p.vep*.55-p.ver)*(rp/p.a2);else ve=p.vep*.55+(p.vep-p.vep*.55)*Math.pow((rp-p.a2)/(1-p.a2),1.4);if(p.vhi)ve*=1.25;if(p.vlim)ve=Math.min(ve,p.vep);ve=Math.max(5,ve*(1+g()*p.n*.5));const bf=Math.max(8,Math.round(p.bfr+(p.bfp-p.bfr)*Math.pow(rp,1.15)+g()*1.5));const vt=Math.max(.3,ve/bf);const w=Math.max(0,Math.round(p.wp*rp));let pc;if(rp<p.a1)pc=p.pcr+p.pci*(rp/p.a1);else pc=(p.pcr+p.pci)-p.pcd*Math.pow((rp-p.a1)/(1-p.a1),1.3);pc=Math.max(20,pc+g());const po=Math.max(85,p.por+p.poi*Math.pow(rp,1.4)+g()*1.5);const sp=Math.max(80,Math.round(p.sr-(p.sr-p.sm)*Math.pow(rp,2)+g()*.5));d.push({time:Math.round(t),vo2:Math.round(vo2*10)/10,vo2kg:Math.round((vo2/wt)*10)/10,vco2:Math.round(vco2*10)/10,rer:Math.round(rer*1000)/1000,ve:Math.round(ve*10)/10,hr:Math.round(hr),bf,vt:Math.round(vt*100)/100,peto2:Math.round(po*10)/10,petco2:Math.round(pc*10)/10,vevo2:vo2>100?Math.round((ve/(vo2/1000))*10)/10:25,vevco2:vco2>100?Math.round((ve/(vco2/1000))*10)/10:30,workload:w,speed:0,grade:0,spo2:sp})}return d}
+function genLac(pr){if(!pr.lac)return null;const p=pr.ph;return pr.lac.map(pt=>({time:Math.round(pt.p*p.dur),lactate:pt.v,hr:Math.round(p.hr0+(p.hrp-p.hr0)*Math.pow(pt.p,.92)),workload:Math.round(p.wp*pt.p)}))}
+
+// CSV
+const CC=["time","vo2","vo2kg","vco2","rer","ve","hr","bf","vt","peto2","petco2","vevo2","vevco2","workload","speed","grade","spo2"];
+const CH=["Time (s)","VO2 (mL/min)","VO2/kg (mL/min/kg)","VCO2 (mL/min)","RER","VE (L/min)","HR (bpm)","BF (breaths/min)","VT (L)","PETO2 (mmHg)","PETCO2 (mmHg)","VE/VO2","VE/VCO2","Workload (W)","Speed","Grade","SpO2 (%)"];
+function mkCSV(d,c,h){return h.join(",")+"\n"+d.map(r=>c.map(k=>r[k]??"").join(",")).join("\n")}
+function dl(t,f){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([t],{type:"text/csv"}));a.download=f;a.click()}
+function dlAllCSVs(){P.forEach(pr=>{dl(mkCSV(genBxB(pr),CC,CH),`CPET_${pr.id}.csv`);const l=genLac(pr);if(l)dl(mkCSV(l,["time","lactate","hr","workload"],["Time (s)","Lactate (mmol/L)","HR (bpm)","Workload (W)"]),`Lactate_${pr.id}.csv`)})}
+
+function parseCSV(t){const ln=t.split("\n").map(l=>l.trim()).filter(l=>l);if(ln.length<2)return null;const h=ln[0].split(/[,;\t]/).map(x=>x.trim().toLowerCase().replace(/['"]/g,""));return ln.slice(1).map(line=>{const v=line.split(/[,;\t]/).map(x=>x.trim().replace(/['"]/g,""));const r={};h.forEach((k,i)=>{const n=parseFloat(v[i]);r[k]=isNaN(n)?v[i]:n});const m=(names)=>{for(const n of names)if(r[n]!==undefined)return r[n];return null};return{time:m(["time (s)","time","t","elapsed"])||0,vo2:m(["vo2 (ml/min)","vo2","v'o2"])||0,vo2kg:m(["vo2/kg (ml/min/kg)","vo2/kg","vo2kg"])||0,vco2:m(["vco2 (ml/min)","vco2","v'co2"])||0,rer:m(["rer","r","rq"])||0,ve:m(["ve (l/min)","ve","v'e"])||0,hr:m(["hr (bpm)","hr","heart rate"])||0,bf:m(["bf (breaths/min)","bf","rr"])||0,vt:m(["vt (l)","vt"])||0,peto2:m(["peto2 (mmhg)","peto2"])||0,petco2:m(["petco2 (mmhg)","petco2"])||0,vevo2:m(["ve/vo2","vevo2"])||0,vevco2:m(["ve/vco2","vevco2"])||0,workload:m(["workload (w)","workload","watts"])||0,speed:0,grade:0,spo2:m(["spo2 (%)","spo2"])||98}})}
+function parseLac(t){const ln=t.split("\n").map(l=>l.trim()).filter(l=>l);if(ln.length<2)return null;const h=ln[0].split(/[,;\t]/).map(x=>x.trim().toLowerCase().replace(/['"]/g,""));return ln.slice(1).map(line=>{const v=line.split(/[,;\t]/).map(x=>x.trim().replace(/['"]/g,""));const r={};h.forEach((k,i)=>{const n=parseFloat(v[i]);r[k]=isNaN(n)?v[i]:n});return{time:r["time (s)"]||r.time||0,lactate:r["lactate (mmol/l)"]||r.lactate||0,hr:r["hr (bpm)"]||r.hr||null,workload:r["workload (w)"]||r.workload||null}})}
+
+// ═══════════════════════════════════════════════════
+// PHYSIOLOGY
+// ═══════════════════════════════════════════════════
+function predVO2(a,s,w){return s==="male"?(w*(50.72-.372*a))/1000:(w*(22.78-.17*a))/1000}
+function bmi(w,h){return w/((h/100)**2)}
+function bsa(w,h){return .007184*Math.pow(h,.725)*Math.pow(w,.425)}
+function maxHR(a){return 220-a}
+function met(v){return v/3.5}
+function fatOx(v,c){return 1.67*(v/1000)-1.67*(c/1000)}
+function carbOx(v,c){return 4.55*(c/1000)-3.21*(v/1000)}
+function fitClass(v,a,s){const m=[{a:29,S:52,E:46,G:42,F:36,P:33},{a:39,S:49,E:43,G:39,F:35,P:31},{a:49,S:44,E:39,G:36,F:32,P:29},{a:59,S:40,E:35,G:32,F:28,P:25},{a:69,S:37,E:32,G:29,F:25,P:22},{a:99,S:34,E:29,G:26,F:22,P:20}];const f=[{a:29,S:47,E:40,G:36,F:31,P:28},{a:39,S:44,E:37,G:33,F:28,P:25},{a:49,S:40,E:34,G:30,F:25,P:22},{a:59,S:36,E:31,G:27,F:23,P:20},{a:69,S:33,E:28,G:24,F:21,P:18},{a:99,S:30,E:25,G:22,F:19,P:16}];const t=s==="male"?m:f;const r=t.find(x=>a<=x.a)||t[t.length-1];if(v>=r.S)return{lv:"Superior",cl:"var(--accent-light)",pc:"≥95th"};if(v>=r.E)return{lv:"Excellent",cl:"var(--success)",pc:"80-95th"};if(v>=r.G)return{lv:"Good",cl:"var(--success-light)",pc:"60-80th"};if(v>=r.F)return{lv:"Fair",cl:"var(--warning)",pc:"40-60th"};if(v>=r.P)return{lv:"Poor",cl:"var(--warning-light)",pc:"20-40th"};return{lv:"Very Poor",cl:"var(--danger)",pc:"<20th"}}
+function detectAT(d){if(!d||d.length<10)return{a1:Math.floor(d.length*.5),a2:Math.floor(d.length*.75)};let a1=Math.floor(d.length*.45),best=0;for(let i=Math.floor(d.length*.25);i<Math.floor(d.length*.65);i++){if(i<5||d.length-i<5)continue;const b=d.slice(0,i),a=d.slice(i);const sb=lslope(b.map(x=>x.vo2),b.map(x=>x.vco2)),sa=lslope(a.map(x=>x.vo2),a.map(x=>x.vco2));const ch=Math.abs(sa-sb);if(ch>best){best=ch;a1=i}}let a2=Math.floor(d.length*.75),mn=Infinity;for(let i=a1;i<d.length-3;i++){const v=d[i].vco2>0?d[i].ve/(d[i].vco2/1000):Infinity;if(v<mn){mn=v;a2=i}}return{a1,a2}}
+function lslope(x,y){const n=Math.min(x.length,y.length);if(n<2)return 0;let sx=0,sy=0,sxy=0,sx2=0;for(let i=0;i<n;i++){sx+=x[i];sy+=y[i];sxy+=x[i]*y[i];sx2+=x[i]*x[i]}const d=n*sx2-sx*sx;return d?(n*sxy-sx*sy)/d:0}
+function zones(mhr){return[{z:1,nm:"Recovery",lo:Math.round(mhr*.50),hi:Math.round(mhr*.60),cl:"var(--z1)",ds:"Easy effort, fat metabolism"},{z:2,nm:"Aerobic Base",lo:Math.round(mhr*.60),hi:Math.round(mhr*.70),cl:"var(--z2)",ds:"Comfortable, builds foundation"},{z:3,nm:"Tempo",lo:Math.round(mhr*.70),hi:Math.round(mhr*.80),cl:"var(--z3)",ds:"Moderate, improves aerobic capacity"},{z:4,nm:"Threshold",lo:Math.round(mhr*.80),hi:Math.round(mhr*.90),cl:"var(--z4)",ds:"Hard, improves lactate clearance"},{z:5,nm:"VO₂max",lo:Math.round(mhr*.90),hi:mhr,cl:"var(--z5)",ds:"Maximum effort, peak performance"}]}
+function ft(s){return Math.floor(s/60)+":"+String(Math.floor(s%60)).padStart(2,"0")}
+
+// ═══════════════════════════════════════════════════
+// CHARTS
+// ═══════════════════════════════════════════════════
+function chart(d,xk,yk,cl,lb,o={}){const W=o.w||480,H=o.h||220,p={t:30,r:20,b:40,l:55},w=W-p.l-p.r,h=H-p.t-p.b;if(!d||d.length<2)return'';let ay=[];yk.forEach(k=>d.forEach(r=>{if(r[k]!=null&&!isNaN(r[k]))ay.push(r[k])}));const xv=d.map(r=>r[xk]).filter(v=>v!=null&&!isNaN(v));if(!xv.length||!ay.length)return'';const xn=Math.min(...xv),xx=Math.max(...xv),yn=Math.min(0,Math.min(...ay)),yx=Math.max(...ay)*1.1;const sx=v=>p.l+((v-xn)/(xx-xn||1))*w,sy=v=>p.t+h-((v-yn)/(yx-yn||1))*h;let s=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;height:auto"><rect x="0" y="0" width="${W}" height="${H}" fill="var(--surface)" rx="8"/>`;if(o.title)s+=`<text x="${W/2}" y="18" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600" font-family="'DM Sans',sans-serif">${o.title}</text>`;for(let i=0;i<5;i++){const yv=yn+((yx-yn)*i)/4;s+=`<line x1="${p.l}" y1="${sy(yv)}" x2="${p.l+w}" y2="${sy(yv)}" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="3,3"/><text x="${p.l-5}" y="${sy(yv)+4}" text-anchor="end" fill="var(--text-muted)" font-size="9" font-family="'DM Mono',monospace">${Math.round(yv)}</text>`}for(let i=0;i<5;i++){const xv2=xn+((xx-xn)*i)/4;s+=`<text x="${sx(xv2)}" y="${H-8}" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="'DM Mono',monospace">${xk==="time"?ft(xv2):Math.round(xv2)}</text>`}yk.forEach((k,ki)=>{const pts=d.filter(r=>r[k]!=null&&!isNaN(r[k])&&r[xk]!=null).map(r=>`${sx(r[xk])},${sy(r[k])}`).join(" ");if(pts){s+=`<polyline points="${pts}" fill="none" stroke="${cl[ki]}" stroke-width="2" stroke-linecap="round" opacity="0.9"/>`;if(lb&&lb[ki])s+=`<text x="${p.l+w-5}" y="${p.t+14+ki*14}" text-anchor="end" fill="${cl[ki]}" font-size="9" font-weight="500">● ${lb[ki]}</text>`}});s+='</svg>';return s}
+
+function gauge(v,mx,lb,cls,cl,u){const pc=Math.min(v/mx,1),r=60,ci=Math.PI*r,of=ci*(1-pc);const vs=typeof v==="number"?v.toFixed(1):v;return`<div style="text-align:center;padding:10px;min-width:120px"><svg width="130" height="80" viewBox="0 0 140 85"><path d="M 10 75 A 60 60 0 0 1 130 75" fill="none" stroke="var(--surface-light)" stroke-width="10" stroke-linecap="round"/><path d="M 10 75 A 60 60 0 0 1 130 75" fill="none" stroke="${cl}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${ci}" stroke-dashoffset="${of}" style="transition:stroke-dashoffset 1s"/><text x="70" y="52" text-anchor="middle" fill="var(--text)" font-size="20" font-weight="700" font-family="'DM Mono',monospace">${vs}</text><text x="70" y="70" text-anchor="middle" fill="var(--text-muted)" font-size="10">${u||''}</text></svg><div style="color:${cl};font-weight:700;font-size:11px;margin-top:2px">${cls}</div><div style="color:var(--text-sec);font-size:10px;margin-top:2px">${lb}</div></div>`}
+
+// ═══════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════
+function nav(t){curTab=t;['import','patient','report'].forEach(x=>{document.getElementById('p-'+x).classList.toggle('hidden',x!==t);const b=document.getElementById('n-'+x);b.classList.toggle('active',x===t)});window.scrollTo(0,0)}
+function en(t){document.getElementById('n-'+t).disabled=false}
+function switchR(v){curR=v;['pat','clin','epic'].forEach(x=>{document.getElementById('r-'+x).classList.toggle('hidden',x!==v);document.getElementById('rt-'+x).classList.toggle('active',x===v)})}
+
+// ═══════════════════════════════════════════════════
+// LOAD PROFILE
+// ═══════════════════════════════════════════════════
+function loadP(id){const pr=P.find(x=>x.id===id);if(!pr)return;D=genBxB(pr);L=genLac(pr);const pt=pr.pt;document.getElementById('f-name').value=pt.name;document.getElementById('f-age').value=pt.age;document.getElementById('f-sex').value=pt.sex;document.getElementById('f-ht').value=pt.ht;document.getElementById('f-wt').value=pt.wt;document.getElementById('f-proto').value=pt.proto;document.getElementById('f-mod').value=pt.mod;document.getElementById('f-ind').value=pt.ind||'';document.getElementById('f-bp').value=pt.bp||'';document.getElementById('f-ecg').value='Normal sinus rhythm';document.querySelectorAll('.pc').forEach(c=>{c.classList.remove('sel');c.style.borderColor='var(--border)'});const el=document.getElementById('pc-'+id);if(el){el.classList.add('sel');el.style.borderColor=pr.cl}document.getElementById('ustat').innerHTML=`<div style="padding:12px;background:var(--accent-glow);border-radius:8px;border:1px solid var(--accent)"><span style="color:var(--success-light);font-weight:600">✓ Loaded "${pr.nm}" — ${D.length} data points${L?', '+L.length+' lactate points':''}</span></div>`;en('patient');nav('patient')}
+
+function handleCPET(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{const p=parseCSV(ev.target.result);if(p&&p.length>0){D=p;document.getElementById('ustat').innerHTML=`<div style="padding:12px;background:var(--accent-glow);border-radius:8px;border:1px solid var(--accent)"><span style="color:var(--success-light);font-weight:600">✓ ${p.length} data points from ${f.name}</span></div>`;en('patient');nav('patient')}else alert("Could not parse CSV.")};r.readAsText(f)}
+function handleLac(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{const p=parseLac(ev.target.result);if(p&&p.length>0){L=p;document.getElementById('ustat').innerHTML+=`<div style="padding:12px;background:var(--accent-glow);border-radius:8px;border:1px solid var(--accent);margin-top:8px"><span style="color:var(--success-light);font-weight:600">✓ ${p.length} lactate points from ${f.name}</span></div>`}};r.readAsText(f)}
+
+// ═══════════════════════════════════════════════════
+// GENERATE
+// ═══════════════════════════════════════════════════
+function getPt(){return{name:document.getElementById('f-name').value,age:parseFloat(document.getElementById('f-age').value)||40,sex:document.getElementById('f-sex').value,ht:parseFloat(document.getElementById('f-ht').value)||175,wt:parseFloat(document.getElementById('f-wt').value)||80,proto:document.getElementById('f-proto').value,mod:document.getElementById('f-mod').value,ind:document.getElementById('f-ind').value,meds:document.getElementById('f-meds').value,bp:document.getElementById('f-bp').value,ecg:document.getElementById('f-ecg').value}}
+
+function generate(){
+if(!D||!D.length){alert("No data loaded.");return}
+const pt=getPt(),a=pt.age,s=pt.sex,w=pt.wt,h=pt.ht;
+const _bmi=bmi(w,h),_bsa=bsa(w,h),pv=predVO2(a,s,w)*1000,mh=maxHR(a);
+const pkVO2=Math.max(...D.map(d=>d.vo2||0)),pkI=D.findIndex(d=>d.vo2===pkVO2),pk=D[pkI]||D[D.length-1];
+const pkHR=Math.max(...D.map(d=>d.hr||0)),pkVE=Math.max(...D.map(d=>d.ve||0)),pkW=Math.max(...D.map(d=>d.workload||0));
+const pkRER=pk.rer||(pk.vco2/pkVO2),pkKG=pkVO2/w,pp=(pkVO2/pv)*100,phr=(pkHR/mh)*100;
+const pkMET=met(pkKG),pkO2P=pkVO2/pkHR,cls=fitClass(pkKG,a,s);
+const th=detectAT(D),a1r=D[th.a1]||{},a2r=D[th.a2]||{};
+const vvv=D.filter(d=>d.vco2>100&&d.ve>5);
+const vvSlope=vvv.length>5?lslope(vvv.map(d=>d.vco2/1000),vvv.map(d=>d.ve)):null;
+const vvNadir=Math.min(...D.filter(d=>d.vco2>100).map(d=>d.ve/(d.vco2/1000)));
+const fod=D.map(d=>({time:d.time,fatOx:fatOx(d.vo2,d.vco2),carbOx:carbOx(d.vo2,d.vco2)}));
+const pkFat=Math.max(...fod.map(d=>d.fatOx));
+const cross=D.find(d=>d.rer>=1);const crossT=cross?cross.time:null;
+const a1f=fod[th.a1];const fcAT1=a1f?`${(Math.max(0,a1f.fatOx)*100/(Math.max(.01,a1f.fatOx)+Math.max(.01,a1f.carbOx))).toFixed(0)}% fat / ${(Math.max(0,a1f.carbOx)*100/(Math.max(.01,a1f.fatOx)+Math.max(.01,a1f.carbOx))).toFixed(0)}% carb`:"N/A";
+const zn=zones(mh);const hL=L&&L.length>0;
+let rL=null,pL=null,lAT=null,lt4=null;
+if(hL){rL=L[0]?.lactate;pL=Math.max(...L.map(d=>d.lactate));const at1t=a1r.time||0;const cl=L.reduce((p,c)=>Math.abs(c.time-at1t)<Math.abs(p.time-at1t)?c:p);lAT=cl?.lactate;const l4=L.find(d=>d.lactate>=4);lt4=l4?.time}
+
+R={pt,_bmi,_bsa,pv,mh,pkVO2,pkKG,pkHR,pkVE,pkW,pkRER,pp,phr,pkMET,pkO2P,cls,
+a1v:a1r.vo2||0,a1k:(a1r.vo2||0)/w,a1h:a1r.hr||0,a2v:a2r.vo2||0,a2k:(a2r.vo2||0)/w,a2h:a2r.hr||0,
+vvSlope,vvNadir,fod,pkFat,crossT,fcAT1,zn,hL,rL,pL,lAT,lt4};
+renderAll();en('report');nav('report')}
+
+// ═══════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════
+function renderAll(){
+if(!R)return;const r=R,pt=r.pt,hL=r.hL;
+const cd=D.filter((_,i)=>i%3===0||i===D.length-1);
+const fd=r.fod.filter((_,i)=>i%3===0);
+const ds=new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
+const zc=["var(--z1)","var(--z2)","var(--z3)","var(--z4)","var(--z5)"];
+
+// PATIENT
+let h='';
+h+=`<div class="card card-glow" style="text-align:center;padding:24px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:3px;color:var(--accent-light);margin-bottom:8px">Baptist Health Heart Institute</div><div style="font-size:20px;font-weight:800;margin-bottom:4px">Your Exercise Test Results</div><div style="color:var(--text-sec);font-size:13px">${pt.name||"Patient"} • ${ds}</div></div>`;
+
+h+=`<div class="card"><div class="stitle">Your Fitness Level</div><div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px">${gauge(r.pkKG,70,"VO₂max",r.cls.lv,r.cls.cl,"mL/kg/min")}${gauge(r.pkMET,20,"Peak METs",r.pkMET>=10?"Excellent":r.pkMET>=7?"Good":"Below Avg",r.pkMET>=10?"var(--success)":r.pkMET>=7?"var(--warning)":"var(--danger)","METs")}${gauge(r.pkHR,220,"Peak HR",r.phr.toFixed(0)+"% pred","var(--accent-light)","bpm")}${gauge(r.pkRER,1.4,"Effort (RER)",r.pkRER>=1.10?"Maximal":r.pkRER>=1.05?"Near Max":"Submaximal",r.pkRER>=1.10?"var(--success)":"var(--warning)","")}</div><div style="text-align:center;margin-top:12px;padding:12px;background:var(--surface-light);border-radius:8px"><span style="color:var(--text-sec);font-size:13px">Your VO₂max is <strong style="color:${r.cls.cl}">${r.pkKG.toFixed(1)} mL/kg/min</strong> — <strong style="color:${r.cls.cl}">${r.cls.pc} percentile</strong> (${r.cls.lv}) for your age and sex.</span></div></div>`;
+
+h+=`<div class="card"><div class="stitle">Your Training Zones</div><p style="color:var(--text-sec);font-size:12px;margin-bottom:12px">Based on YOUR actual test — not generic formulas.</p><div class="zbar">${r.zn.map((z,i)=>`<div class="z" style="background:${zc[i]}"><div class="zn">Z${z.z}</div><div class="zh">${z.lo}-${z.hi}</div></div>`).join('')}</div><div>${r.zn.map((z,i)=>`<div class="zrow"><div class="zicon" style="background:${zc[i]}">${z.z}</div><div style="flex:1"><div style="font-weight:600;font-size:13px">${z.nm}</div><div style="font-size:11px;color:var(--text-muted)">${z.ds}</div></div><div style="text-align:right"><div style="font-weight:700;font-size:14px;color:${zc[i]}" class="mono">${z.lo}–${z.hi}</div><div style="font-size:10px;color:var(--text-muted)">bpm</div></div></div>`).join('')}</div></div>`;
+
+h+=`<div class="card"><div class="stitle">Exercise Response</div><div class="g2">${chart(cd,"time",["vo2kg"],["var(--accent-light)"],["VO₂"],{title:"Oxygen Consumption",w:500,h:220})}${chart(cd,"time",["hr"],["var(--danger)"],["HR"],{title:"Heart Rate",w:500,h:220})}</div></div>`;
+
+h+=`<div class="card"><div class="stitle">Metabolic Efficiency</div><div class="g2">${chart(cd,"time",["rer"],["var(--purple)"],["RER"],{title:"RER",w:500,h:200})}${chart(fd,"time",["fatOx","carbOx"],["var(--warning)","var(--accent-light)"],["Fat","Carbs"],{title:"Fuel Use",w:500,h:200})}</div><div class="fw" style="margin-top:12px"><div class="sb" style="flex:1;min-width:120px"><div class="v" style="color:var(--warning);font-size:20px">${r.pkFat.toFixed(2)}</div><div class="l">Peak Fat Burn (g/min)</div></div><div class="sb" style="flex:1;min-width:120px"><div class="v" style="color:var(--accent-light);font-size:20px">${r.crossT?ft(r.crossT):"N/A"}</div><div class="l">Crossover Point</div></div><div class="sb" style="flex:1;min-width:120px"><div class="v" style="color:var(--success-light);font-size:16px">${r.fcAT1}</div><div class="l">Fuel at Threshold</div></div></div></div>`;
+
+if(hL){h+=`<div class="card"><div class="stitle">Lactate Response</div>${chart(L,"time",["lactate"],["var(--danger-light)"],["Lactate"],{title:"Blood Lactate Curve",w:600,h:220})}<div class="fw" style="margin-top:12px"><div class="sb" style="flex:1;min-width:100px"><div class="v" style="color:var(--success-light);font-size:20px">${r.rL?.toFixed(1)||"—"}</div><div class="l">Resting</div></div><div class="sb" style="flex:1;min-width:100px"><div class="v" style="color:var(--warning);font-size:20px">${r.lAT?.toFixed(1)||"—"}</div><div class="l">At Threshold</div></div><div class="sb" style="flex:1;min-width:100px"><div class="v" style="color:var(--danger-light);font-size:20px">${r.pL?.toFixed(1)||"—"}</div><div class="l">Peak</div></div></div></div>`}
+
+h+=`<div style="text-align:center;padding:16px;color:var(--text-muted);font-size:11px">Arkansas Cardiology / Baptist Health Exercise &amp; Sports Cardiology<br>Charles Caldwell, MD, FACC &amp; Jay Geoghagan, MD, FACC<br>Vyntus CPX / Sentry Suite V3.20.7</div>`;
+document.getElementById('r-pat').innerHTML=h;
+
+// CLINICAL
+let c='';
+c+=`<div class="card"><div class="stitle">Full Detail</div><div class="g2">${chart(cd,"vo2",["vco2"],["var(--accent-light)"],["VCO₂"],{title:"V-Slope",w:500,h:250})}${chart(cd,"time",["vevo2","vevco2"],["var(--warning)","var(--success)"],["VE/VO₂","VE/VCO₂"],{title:"Ventilatory Equivalents",w:500,h:250})}</div><div class="g2" style="margin-top:12px">${chart(cd,"time",["peto2","petco2"],["var(--accent-light)","var(--danger-light)"],["PETO₂","PETCO₂"],{title:"End-Tidal Gases",w:500,h:220})}${chart(cd,"time",["ve"],["var(--purple-light)"],["VE"],{title:"Minute Ventilation",w:500,h:220})}</div></div>`;
+
+const st=[{l:"Peak VO₂",v:`${r.pkVO2.toFixed(0)}`,s:`${r.pkKG.toFixed(1)} mL/kg/min`},{l:"% Predicted",v:`${r.pp.toFixed(0)}%`,s:`Pred: ${r.pv.toFixed(0)}`},{l:"Peak HR",v:`${r.pkHR}`,s:`${r.phr.toFixed(0)}% pred`},{l:"Peak RER",v:r.pkRER.toFixed(2),s:r.pkRER>=1.1?"Maximal":"Submaximal"},{l:"Peak METs",v:r.pkMET.toFixed(1)},{l:"O₂ Pulse",v:`${r.pkO2P.toFixed(1)}`},{l:"Peak VE",v:`${r.pkVE.toFixed(1)}`},{l:"Peak W",v:`${r.pkW}`},{l:"AT1",v:`${r.a1v.toFixed(0)}`,s:`${r.a1k.toFixed(1)} | HR ${r.a1h.toFixed(0)}`},{l:"AT2",v:`${r.a2v.toFixed(0)}`,s:`${r.a2k.toFixed(1)} | HR ${r.a2h.toFixed(0)}`},{l:"VE/VCO₂ Slope",v:r.vvSlope?.toFixed(1)||"—",s:r.vvSlope<30?"Normal":r.vvSlope<36?"Mild↑":"Elevated"},{l:"VE/VCO₂ Nadir",v:r.vvNadir?.toFixed(1)||"—"}];
+c+=`<div class="card"><div class="stitle">Summary</div><div class="g4">${st.map(x=>`<div class="sb"><div class="l">${x.l}</div><div class="v">${x.v}</div>${x.s?`<div class="s">${x.s}</div>`:''}</div>`).join('')}</div></div>`;
+document.getElementById('r-clin').innerHTML=c;
+
+// EPIC
+let e=`<div class="card"><div class="stitle">Interpretation (Editable)</div><div style="margin-bottom:12px"><label class="fl">ECG Findings</label><textarea id="e-ecg" placeholder="No ST-T changes. No arrhythmias."></textarea></div><div style="margin-bottom:12px"><label class="fl">BP Response</label><textarea id="e-bp" style="min-height:40px" placeholder="Appropriate augmentation."></textarea></div><div style="margin-bottom:12px"><label class="fl">Symptoms / Termination</label><textarea id="e-sx" style="min-height:40px" placeholder="Volitional exhaustion."></textarea></div><div style="margin-bottom:12px"><label class="fl">Interpretation</label><textarea id="e-int" style="min-height:100px" placeholder="Maximal CPET..."></textarea></div><div style="margin-bottom:12px"><label class="fl">Recommendations</label><textarea id="e-rec" style="min-height:60px" placeholder="Training zones provided."></textarea></div></div><div class="card"><div class="stitle">EPIC EMR Report</div><div class="fw no-print" style="margin-bottom:12px"><button class="btn btn-p btn-sm" onclick="refEpic()">🔄 Refresh</button><button class="btn btn-s btn-sm" onclick="cpEpic()">📋 Copy to Clipboard</button></div><pre id="epic-pre" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;color:var(--text-sec);font-size:11px;font-family:'DM Mono',monospace;white-space:pre-wrap;line-height:1.5;max-height:500px;overflow:auto"></pre></div>`;
+
+document.getElementById(‘r-epic’).innerHTML=e;
+refEpic()}
+
+function epicTxt(){const r=R,pt=r.pt,d=new Date().toLocaleDateString(“en-US”,{year:“numeric”,month:“long”,day:“numeric”});
+const ecg=document.getElementById(‘e-ecg’)?.value||“No ST-T changes. No arrhythmias.”;
+const bp=document.getElementById(‘e-bp’)?.value||“Appropriate augmentation.”;
+const sx=document.getElementById(‘e-sx’)?.value||“Volitional exhaustion.”;
+const int=document.getElementById(‘e-int’)?.value||`Maximal CPET. VO2max ${r.pkKG.toFixed(1)} mL/kg/min (${r.pp.toFixed(0)}% predicted), ${r.cls.lv}. RER ${r.pkRER.toFixed(2)} suggests ${r.pkRER>=1.1?"adequate":"submaximal"} effort. Thresholds identified. No arrhythmias or ischemia.`;
+const rec=document.getElementById(‘e-rec’)?.value||“Training zones provided. Follow-up as indicated.”;
+let t=`CARDIOPULMONARY EXERCISE TEST (CPET) REPORT\n${"═".repeat(55)}\nDate: ${d}\nEquipment: Vyntus CPX / Sentry Suite V3.20.7\nProtocol: ${pt.proto} | Modality: ${pt.mod}\n\nPATIENT: ${pt.name||"___"} | Age: ${pt.age} | Sex: ${pt.sex}\nHeight: ${pt.ht} cm | Weight: ${pt.wt} kg | BMI: ${r._bmi.toFixed(1)} | BSA: ${r._bsa.toFixed(2)}\nIndication: ${pt.ind||"Exercise evaluation"}\n\nResting HR: ${D[0]?.hr||"___"} | BP: ${pt.bp||"___"} | SpO2: ${D[0]?.spo2||"___"}%\n\nPEAK VALUES\nVO2: ${r.pkVO2.toFixed(0)} mL/min (${r.pkKG.toFixed(1)} mL/kg/min) | ${r.pp.toFixed(0)}% pred | ${r.cls.lv}\nMETs: ${r.pkMET.toFixed(1)} | HR: ${r.pkHR} (${r.phr.toFixed(0)}% pred) | RER: ${r.pkRER.toFixed(2)}\nWork: ${r.pkW} W | VE: ${r.pkVE.toFixed(1)} L/min | O2 Pulse: ${r.pkO2P.toFixed(1)}\n\nTHRESHOLDS\nAT1: ${r.a1v.toFixed(0)} mL/min (${r.a1k.toFixed(1)}) HR ${r.a1h.toFixed(0)}\nAT2: ${r.a2v.toFixed(0)} mL/min (${r.a2k.toFixed(1)}) HR ${r.a2h.toFixed(0)}\nVE/VCO2 Slope: ${r.vvSlope?.toFixed(1)||"___"} | Nadir: ${r.vvNadir?.toFixed(1)||"___"}\n\nZONES\nZ1: ${r.zn[0].lo}-${r.zn[0].hi} | Z2: ${r.zn[1].lo}-${r.zn[1].hi} | Z3: ${r.zn[2].lo}-${r.zn[2].hi} | Z4: ${r.zn[3].lo}-${r.zn[3].hi} | Z5: ${r.zn[4].lo}-${r.zn[4].hi}`;
+if(r.hL)t+=`\n\nLACTATE: Rest ${r.rL?.toFixed(1)||"___"} | AT1 ${r.lAT?.toFixed(1)||"___"} | Peak ${r.pL?.toFixed(1)||"___"} mmol/L`;
+t+=`\n\nECG: ${ecg}\nBP: ${bp}\nSx: ${sx}\n\nINTERPRETATION:\n${int}\n\nRECOMMENDATIONS:\n${rec}\n\n${"═".repeat(55)}\nBaptist Health Heart Institute\nCharles Caldwell, MD, FACC    Jay Geoghagan, MD, FACC`;
+return t}
+function refEpic(){const el=document.getElementById(‘epic-pre’);if(el)el.textContent=epicTxt()}
+function cpEpic(){navigator.clipboard.writeText(epicTxt()).then(()=>alert(“Copied!”)).catch(()=>{const t=document.createElement(“textarea”);t.value=epicTxt();document.body.appendChild(t);t.select();document.execCommand(“copy”);document.body.removeChild(t);alert(“Copied!”)})}
+
+// ═══════════════════════════════════════════════════
+// PWA INSTALL
+// ═══════════════════════════════════════════════════
+let deferredPrompt=null;
+window.addEventListener(‘beforeinstallprompt’,e=>{e.preventDefault();deferredPrompt=e;document.getElementById(‘install-banner’).style.display=‘flex’});
+function installApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;document.getElementById(‘install-banner’).style.display=‘none’})}else{document.getElementById(‘install-banner’).style.display=‘none’;if(/iPhone|iPad/.test(navigator.userAgent)){alert(“To install: tap the Share button (□↑) at the bottom of Safari, then ‘Add to Home Screen’”)}}}
+function dismissInstall(){document.getElementById(‘install-banner’).style.display=‘none’}
+
+// Show iOS install hint
+if(/iPhone|iPad/.test(navigator.userAgent)&&!navigator.standalone){
+setTimeout(()=>{const b=document.getElementById(‘install-banner’);b.style.display=‘flex’;document.getElementById(‘install-btn’).textContent=‘How to Install’},1500);
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+document.addEventListener(‘DOMContentLoaded’,()=>{
+const g=document.getElementById(‘prof-grid’);
+g.innerHTML=P.map(pr=>{const vk=Math.round(pr.ph.vp/pr.pt.wt);return`<div class="pc" id="pc-${pr.id}" onclick="loadP('${pr.id}')"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="width:10px;height:10px;border-radius:50%;background:${pr.cl};box-shadow:0 0 8px ${pr.cl}88"></div><div style="flex:1"><div style="font-weight:700;font-size:13px">${pr.nm}</div><div style="font-size:10px;color:var(--text-muted)">${pr.cat} • ${pr.pt.age}y ${pr.pt.sex}</div></div></div><div style="font-size:11px;color:var(--text-sec);line-height:1.5;margin-bottom:8px">${pr.desc}</div><div style="display:flex;gap:4px"><div class="sb" style="flex:1;padding:6px"><div class="v" style="font-size:13px;color:${pr.cl}">${vk}</div><div class="l">VO₂/kg</div></div><div class="sb" style="flex:1;padding:6px"><div class="v" style="font-size:13px;color:var(--danger)">${pr.ph.hrp}</div><div class="l">HR</div></div><div class="sb" style="flex:1;padding:6px"><div class="v" style="font-size:13px;color:var(--purple)">${pr.ph.rp}</div><div class="l">RER</div></div><div class="sb" style="flex:1;padding:6px"><div class="v" style="font-size:13px;color:var(--warning)">${pr.lac?"Yes":"No"}</div><div class="l">Lac</div></div></div></div>`}).join(’’)});
+</script>
+
+</body>
+</html>
